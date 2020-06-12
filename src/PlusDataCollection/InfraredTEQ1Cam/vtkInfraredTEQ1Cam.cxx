@@ -206,7 +206,7 @@ bool vtkInfraredTEQ1Cam::OnShutterCalibration()
 
   if (pTE->ShutterCalibrationOn())
   {
-    logger->i(getName() + ": Shutter Calibration Completed");
+    //logger->i(getName() + ": Shutter Calibration Completed");
     return true;
   }
   else
