@@ -191,3 +191,40 @@ PlusStatus vtkInfraredTEQ1Cam::NotifyConfigured()
 
   return PLUS_SUCCESS;
 }
+
+//----------------------------------------------------------------------------
+
+bool vtkInfraredTEQ1Cam::OnShutterCalibration()
+{
+  // calibration
+  // See uniform scene before calling this function
+  if (!pTE)
+  {
+    LOG_ERROR("TEQ1 camera is not opened");
+		return false;
+  }
+
+  if (pTE->ShutterCalibrationOn())
+  {
+    logger->i(getName() + ": Shutter Calibration Completed");
+    return true;
+  }
+  else
+  {
+    LOG_ERROR("TEQ1 camera: Shutter Not Calibration Completed");
+    return false;
+  }
+}
+
+//----------------------------------------------------------------------------
+
+PlusStatus vtkInfraredTEQ1Cam::CalibrationTEQ1Camera()
+{
+  if (!OnShutterCalibration())
+  {
+    LOG_ERROR("TEQ1 camera: The calibration process failed");
+    return PLUS_FAIL;
+  }
+
+  return PLUS_SUCCESS;
+}

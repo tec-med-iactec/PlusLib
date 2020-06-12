@@ -25,6 +25,9 @@ See License.txt for details.
 #ifdef PLUS_USE_ATRACSYS
   #include "vtkPlusAtracsysCommand.h"
 #endif
+#ifdef PLUS_USE_INFRARED_TEQ1_CAM
+  #include "vtkPlusTEQ1Command.h"
+#endif
 
 #include "vtkPlusAddRecordingDeviceCommand.h"
 #include "vtkPlusGetPolydataCommand.h"
@@ -37,6 +40,7 @@ See License.txt for details.
 #include "vtkPlusStartStopRecordingCommand.h"
 #include "vtkPlusUpdateTransformCommand.h"
 #include "vtkPlusVersionCommand.h"
+
 
 // IGTL includes
 #include "igtl_header.h"
@@ -83,6 +87,10 @@ vtkPlusCommandProcessor::vtkPlusCommandProcessor()
 #ifdef PLUS_USE_ATRACSYS
   RegisterPlusCommand(vtkSmartPointer<vtkPlusAtracsysCommand>::New());
 #endif
+#ifdef PLUS_USE_INFRARED_TEQ1_CAM
+  RegisterPlusCommand(vtkSmartPointer<vtkPlusTEQ1Command>::New());
+#endif
+
 }
 
 //----------------------------------------------------------------------------

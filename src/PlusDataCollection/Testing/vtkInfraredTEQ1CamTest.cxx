@@ -46,6 +46,7 @@ int main(int argc, char **argv)
 {
 
   bool printHelp(false); 
+  bool bCalibration = false;
 
   vtksys::CommandLineArguments args;
   args.Initialize(argc, argv);
@@ -53,7 +54,8 @@ int main(int argc, char **argv)
   int verboseLevel = vtkPlusLogger::LOG_LEVEL_UNDEFINED;
 
   args.AddArgument("--help", vtksys::CommandLineArguments::NO_ARGUMENT, &printHelp, "Print this help.");  
-  args.AddArgument("--verbose", vtksys::CommandLineArguments::EQUAL_ARGUMENT, &verboseLevel, "Verbose level (1=error only, 2=warning, 3=info, 4=debug, 5=trace)");  
+  args.AddArgument("--verbose", vtksys::CommandLineArguments::EQUAL_ARGUMENT, &verboseLevel, "Verbose level (1=error only, 2=warning, 3=info, 4=debug, 5=trace)");
+  args.AddArgument("--calibration-on", vtksys::CommandLineArguments::NO_ARGUMENT, &bCalibration, "Calibrate the device");
 
   if ( !args.Parse() )
   {
@@ -81,8 +83,26 @@ int main(int argc, char **argv)
   infraredTEQ1Cam->AddObserver("WarningEvent", callbackCommand); 
   infraredTEQ1Cam->AddObserver("ErrorEvent", callbackCommand); 
   
-  LOG_INFO("Initialize..."); 
-  infraredTEQ1Cam->Connect();
+  LOG_INFO("Initialize Thermal Expert Q1 camera...");
+  if (PLUS_SUCCESS != infraredTEQ1Cam->Connect() )
+  {
+    LOG_ERROR("Unable to connect to device");
+    exit(EXIT_FAILURE);
+  }
+
+  if (bCalibration)
+  {
+    LOG_INFO("Start to calibrate Thermal Expert Q1 camera ");
+
+    if(PLUS_SUCCESS != infraredTEQ1Cam->CalibrationTEQ1Camera())
+    {
+      infraredTEQ1Cam->Disconnect();
+      LOG_ERROR( "Unable to calibrate the Thermal Expert Q1 camera");
+      exit(EXIT_FAILURE);
+    }
+
+    LOG_INFO("Finish calibrating Thermal Expert Q1 camera");
+  }
 
   if ( infraredTEQ1Cam->GetConnected() )
   {

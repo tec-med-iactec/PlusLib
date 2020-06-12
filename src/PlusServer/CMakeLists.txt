@@ -17,6 +17,7 @@ SET(${PROJECT_NAME}_CMD_SRCS
   Commands/vtkPlusSetUsParameterCommand.cxx
   Commands/vtkPlusGetUsParameterCommand.cxx
   Commands/vtkPlusAddRecordingDeviceCommand.cxx
+  Commands/vtkPlusTEQ1Command.cxx
   )
 SET(${PROJECT_NAME}_SRCS
   vtkPlusOpenIGTLinkServer.cxx
@@ -25,7 +26,6 @@ SET(${PROJECT_NAME}_SRCS
   vtkPlusCommandProcessor.cxx
   ${${PROJECT_NAME}_CMD_SRCS}
   )
-
 IF(MSVC OR ${CMAKE_GENERATOR} MATCHES "Xcode")
   SET(${PROJECT_NAME}_CMD_HDRS
     Commands/vtkPlusCommand.h
@@ -42,6 +42,7 @@ IF(MSVC OR ${CMAKE_GENERATOR} MATCHES "Xcode")
     Commands/vtkPlusSetUsParameterCommand.h
     Commands/vtkPlusGetUsParameterCommand.h
     Commands/vtkPlusAddRecordingDeviceCommand.h
+    Commands/vtkPlusTEQ1Command.h
     )
   SET(${PROJECT_NAME}_HDRS
     vtkPlusOpenIGTLinkServer.h

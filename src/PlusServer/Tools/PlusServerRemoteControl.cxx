@@ -29,6 +29,9 @@ See License.txt for details.
 #ifdef PLUS_USE_CLARIUS
   #include "vtkPlusClariusCommand.h"
 #endif
+#ifdef PLUS_USE_INFRARED_TEQ1_CAM
+  #include "vtkPlusTEQ1Command.h"
+#endif
 
 #include <vtkNew.h>
 #include "vtksys/CommandLineArguments.hxx"
@@ -337,6 +340,23 @@ PlusStatus ExecuteSaveRawData(vtkPlusOpenIGTLinkClient* client, const std::strin
   return client->SendCommand(cmd);
 }
 #endif
+
+//----------------------------------------------------------------------------
+#ifdef PLUS_USE_INFRARED_TEQ1_CAM
+PlusStatus ExecuteTEQ1Calibration(vtkPlusOpenIGTLinkClient* client, const std::string& deviceId, int commandId)
+{
+  vtkSmartPointer<vtkPlusTEQ1Command> cmd = vtkSmartPointer<vtkPlusTEQ1Command>::New();
+  cmd->SetNameToTEQ1Calibration();
+  cmd->SetId(commandId);
+  if (!deviceId.empty())
+  {
+    cmd->SetTEQ1DeviceId(deviceId.c_str());
+  }
+  PrintCommand(cmd);
+  return client->SendCommand(cmd);
+}
+#endif
+
 
 //----------------------------------------------------------------------------
 PlusStatus ExecuteVersion(vtkPlusOpenIGTLinkClient* client, int commandId)
@@ -776,7 +796,7 @@ int main(int argc, char** argv)
   args.AddArgument("--host", vtksys::CommandLineArguments::EQUAL_ARGUMENT, &serverHost, "Host name of the OpenIGTLink server (default: 127.0.0.1)");
   args.AddArgument("--port", vtksys::CommandLineArguments::EQUAL_ARGUMENT, &serverPort, "Port address of the OpenIGTLink server (default: 18944)");
   args.AddArgument("--command", vtksys::CommandLineArguments::EQUAL_ARGUMENT, &command,
-                   "Command name to be executed on the server (START_ACQUISITION, STOP_ACQUISITION, SUSPEND_ACQUISITION, RESUME_ACQUISITION, RECONSTRUCT, START_RECONSTRUCTION, SUSPEND_RECONSTRUCTION, RESUME_RECONSTRUCTION, STOP_RECONSTRUCTION, GET_RECONSTRUCTION_SNAPSHOT, GET_CHANNEL_IDS, GET_DEVICE_IDS, GET_EXAM_DATA, SAVE_RAW_DATA, SEND_TEXT, UPDATE_TRANSFORM, GET_TRANSFORM, GET_POINT)");
+                   "Command name to be executed on the server (START_ACQUISITION, STOP_ACQUISITION, SUSPEND_ACQUISITION, RESUME_ACQUISITION, RECONSTRUCT, START_RECONSTRUCTION, SUSPEND_RECONSTRUCTION, RESUME_RECONSTRUCTION, STOP_RECONSTRUCTION, GET_RECONSTRUCTION_SNAPSHOT, GET_CHANNEL_IDS, GET_DEVICE_IDS, GET_EXAM_DATA, SAVE_RAW_DATA, SEND_TEXT, UPDATE_TRANSFORM, GET_TRANSFORM, GET_POINT, TEQ1_CALIBRATION)");
   args.AddArgument("--command-id", vtksys::CommandLineArguments::EQUAL_ARGUMENT, &commandId, "Command ID to send to the server.");
   args.AddArgument("--server-igtl-version", vtksys::CommandLineArguments::EQUAL_ARGUMENT, &serverHeaderVersion, "The version of IGTL used by the server. Remove this parameter when querying is dynamic.");
   args.AddArgument("--device", vtksys::CommandLineArguments::EQUAL_ARGUMENT, &deviceId, "ID of the controlled device (optional, default: first VirtualStreamCapture or VirtualVolumeReconstructor device). In case of GET_DEVICE_IDS it is not an ID but a device type.");
@@ -938,6 +958,15 @@ int main(int argc, char** argv)
       commandExecutionStatus = ExecuteSaveRawData(client, deviceId, outputFilename, lastNSeconds, enableCompression, commandId);
 #else
       LOG_ERROR("Plus is not built with Clarius support");
+      commandExecutionStatus = PLUS_FAIL;
+#endif
+    }
+else if (igsioCommon::IsEqualInsensitive(command, "TEQ1_CALIBRATION"))
+    {
+#ifdef PLUS_USE_INFRARED_TEQ1_CAM
+      commandExecutionStatus = ExecuteTEQ1Calibration(client, deviceId, commandId);
+#else
+      LOG_ERROR("Plus is not built with Thermal Expert Q1 camera support");
       commandExecutionStatus = PLUS_FAIL;
 #endif
     }

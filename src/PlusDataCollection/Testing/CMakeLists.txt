@@ -505,6 +505,11 @@ IF(PLUS_USE_INFRARED_TEQ1_CAM AND PLUS_RENDERING_ENABLED)
   ADD_EXECUTABLE(vtkInfraredTEQ1CamTest vtkInfraredTEQ1CamTest.cxx)
   SET_TARGET_PROPERTIES(vtkInfraredTEQ1CamTest PROPERTIES FOLDER Tests)
   TARGET_LINK_LIBRARIES(vtkInfraredTEQ1CamTest vtkPlusDataCollection vtkPlusCommon vtkInteractionImage)
+  ADD_TEST(vtkInfraredTEQ1CamTest
+  ${PLUS_EXECUTABLE_OUTPUT_PATH}/vtkInfraredTEQ1CamTest
+  --calibration-on
+  )
+  SET_TESTS_PROPERTIES(vtkInfraredTEQ1CamTest PROPERTIES FAIL_REGULAR_EXPRESSION "ERROR;WARNING")
 ENDIF()
 
 #*************************** vtkOvrvisionProVideoSourceTest ***************************

@@ -48,6 +48,9 @@ public:
   /*! Verify the device is correctly configured */
   virtual PlusStatus NotifyConfigured();
 
+  /*! Calibration TEQ1 camera */
+  PlusStatus CalibrationTEQ1Camera();
+
 protected:
   vtkInfraredTEQ1Cam();
   ~vtkInfraredTEQ1Cam();
@@ -62,6 +65,9 @@ protected:
   float* pImgBuf;
   int width;
   int height;
+
+private:
+  bool OnShutterCalibration();
 };
 
 #endif // __vtkInfraredTEQ1Cam_h
